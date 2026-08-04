@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hey Buddy AI Job List</title>
+<style>
+  :root {
+    --bg: #16140f;
+    --panel: #201d17;
+    --card: #262218;
+    --card-hover: #2f2a1e;
+    --text: #f2ede3;
+    --muted: #a89f8d;
+    --accent: #FD5A1E;
+    --accent-soft: rgba(253,90,30,.16);
+    --green: #EFD19F;
+    --border: #3a3426;
+    --radius: 14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  header { margin-bottom: 28px; }
+  .eyebrow { color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
+  .sub { color: var(--muted); font-size: 15px; max-width: 640px; line-height: 1.5; }
+
+  .stats { display:flex; gap:14px; margin: 22px 0 26px; flex-wrap: wrap; }
+  .stat {
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 20px; min-width: 130px;
+  }
+  .stat .num { font-size: 26px; font-weight: 800; color: var(--accent); }
+  .stat .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .controls { position: sticky; top: 0; z-index: 10; background: linear-gradient(var(--bg) 85%, transparent); padding: 12px 0 16px; }
+  .search {
+    width: 100%; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); font-size: 15px; padding: 13px 18px; outline: none; margin-bottom: 14px;
+  }
+  .search:focus { border-color: var(--accent); }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip {
+    background: var(--panel); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 15px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all .15s; user-select: none;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--text); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip .n { opacity:.7; font-weight: 500; margin-left: 4px; }
+
+  .count-line { color: var(--muted); font-size: 13px; margin: 14px 2px 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; display: flex; flex-direction: column; gap: 10px;
+    transition: transform .15s, border-color .15s, background .15s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--card-hover); }
+  .card-top { display:flex; justify-content: space-between; align-items:flex-start; gap:10px; }
+  .logo {
+    width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+    display:flex; align-items:center; justify-content:center;
+    font-weight: 800; font-size: 17px; color:#fff;
+  }
+  .cname { font-size: 17px; font-weight: 750; }
+  .cdesc { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+  .loc { font-size: 12.5px; color: var(--muted); display:flex; align-items:center; gap:5px; }
+  .loc::before { content:"📍"; font-size: 11px; }
+  .hot {
+    font-size: 11px; font-weight: 700; color: var(--green); background: rgba(239,209,159,.12);
+    padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top: 2px; }
+  .tag {
+    font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft);
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .roles { font-size: 13px; color: var(--text); opacity: .85; line-height: 1.5; }
+  .roles b { color: var(--text); }
+  .apply {
+    margin-top: auto; padding-top: 10px;
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--accent); font-size: 13.5px; font-weight: 700; text-decoration: none;
+  }
+  .apply:hover { text-decoration: underline; }
+  .empty { text-align:center; color: var(--muted); padding: 60px 0; font-size: 15px; grid-column: 1/-1; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 12.5px; line-height: 1.6; border-top: 1px solid var(--border); padding-top: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hey Buddy · August 2026</div>
+    <h1>Hey Buddy AI Job List</h1>
+    <p class="sub">The 33 startups that grew their teams fastest in the past 90 days — filter by profession to find the ones hiring for your kind of work.</p>
+    <div class="stats">
+      <div class="stat"><div class="num">33</div><div class="lbl">Companies</div></div>
+      <div class="stat"><div class="num">500+</div><div class="lbl">Open roles</div></div>
+      <div class="stat"><div class="num" id="statShown">33</div><div class="lbl">Matching filter</div></div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <input class="search" id="search" type="text" placeholder="Search companies, roles, locations… (e.g. 'designer', 'remote', 'fusion')">
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="count-line" id="countLine"></div>
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    Compiled Aug 4, 2026 from public job boards and career pages. Source list: fastest-growing startup teams of the past 90 days (Ben Lang / Harmonic). Listings change weekly — the linked boards are the source of truth.
+  </footer>
+</div>
+
+<script>
+const CATS = ["Software Eng","AI/ML Research","Hardware & Deep Tech","Sales & GTM","Marketing","Product & Design","Operations","Finance & G&A","Recruiting","Expert / Contract","Trades & Field"];
+
+const DATA = [
+  {name:"Prosper AI", desc:"AI voice agents for healthcare — $30M Series A led by a16z.", loc:"SF / remote", cats:["Product & Design","Sales & GTM"], roles:"<b>AI Product Manager</b>, <b>Senior Account Executive</b> (healthcare providers & billing)", url:"https://www.getprosper.ai/careers", hot:""},
+  {name:"Mind Robotics", desc:"Generalized physical AI for industrial environments.", loc:"Palo Alto", cats:["Software Eng","AI/ML Research","Hardware & Deep Tech","Operations","Trades & Field"], roles:"<b>Robotics SWE</b> ($122–179K), <b>ML Infra</b>, <b>Electrical/Mechanical Design</b> (tactile sensing), <b>Firmware</b>, <b>Robot Operator</b>, <b>Supply Chain</b>", url:"https://startup.jobs/company/mind-robotics", hot:"~21 roles"},
+  {name:"Dominion Dynamics", desc:"Sovereign defence & Arctic sensing network for Canada and allies.", loc:"Ottawa", cats:["Hardware & Deep Tech","Software Eng","Trades & Field"], roles:"<b>Sensor Fusion Engineer</b> (CA$88–156K), <b>Electrical (Power/PCB)</b>, <b>Mechanical</b>, <b>Embedded Systems</b> — some with Arctic field deployments", url:"https://www.glassdoor.com/Jobs/Dominion-Dynamics-Jobs-E10841625.htm", hot:"~21 roles"},
+  {name:"Fleet AI", desc:"High-fidelity simulation gyms for training AI agents. Backed by Sequoia.", loc:"NYC / SF / remote", cats:["AI/ML Research","Software Eng","Operations","Expert / Contract"], roles:"<b>AI Engineers & Researchers</b>, <b>Deployments/Ops</b>, plus <b>Fleet Fellow</b> — $50/hr remote expert program", url:"https://www.fleetai.com/careers", hot:""},
+  {name:"NewCore", desc:"Security-first identity platform for humans & AI agents. $66M from stealth.", loc:"Tel Aviv / SF / US", cats:["Software Eng","Sales & GTM","Marketing","Product & Design","Finance & G&A"], roles:"<b>Senior Backend</b>, <b>Identity Tech Lead</b>, <b>Security Researcher</b> (TLV) · <b>Sales & Marketing</b> (US) · <b>Product, G&A</b> (TLV)", url:"https://newcore.com/careers", hot:""},
+  {name:"White Circle", desc:"Testing, monitoring & safeguarding AI systems. Customers incl. Lovable.", loc:"Paris / London / remote", cats:["AI/ML Research","Operations"], roles:"<b>Research Scientist/Engineer (Agentic Systems)</b>, <b>MLOps Engineer</b>, <b>Head of Data Labeling</b> — hybrid, relocation package", url:"https://jobs.ashbyhq.com/whitecircle", hot:""},
+  {name:"Corgi", desc:"Full-stack AI insurance carrier for startups. $374M raised, ~250 people.", loc:"SF", cats:["Software Eng","Sales & GTM","Marketing","Operations","Finance & G&A","Recruiting","Product & Design"], roles:"<b>AE, Account Manager</b>, <b>Ops Associate</b>, <b>Principal Accountant</b>, <b>Client Success Ops</b>, engineering, design, recruiting", url:"https://www.workatastartup.com/companies/corgi-insurance", hot:"47 roles"},
+  {name:"GridCARE", desc:"Unlocks hidden grid capacity to power AI data centers, years faster.", loc:"Redwood City / remote", cats:["Sales & GTM","AI/ML Research"], roles:"<b>Enterprise AE</b>, <b>Director of Utility Partnerships</b>, <b>Data Scientist</b>", url:"https://builtin.com/company/gridcare", hot:""},
+  {name:"Klir", desc:"Compliance & operations software for water utilities.", loc:"Remote (global)", cats:["Software Eng"], roles:"<b>Full-Stack .NET</b>, <b>Cloud Infrastructure</b>, <b>QA Engineer</b> — fully remote team across 5 countries", url:"https://www.klir.com/careers", hot:""},
+  {name:"Bespoke Labs", desc:"Data & RL environment curation for training and evaluating agents.", loc:"Mountain View / US", cats:["AI/ML Research","Software Eng","Marketing","Recruiting","Expert / Contract"], roles:"<b>Research & Engineering</b>, <b>Technical Recruiter</b>, <b>Design + Brand Storyteller</b> (first hire), domain experts for RL environments", url:"https://jobs.ashbyhq.com/bespokelabs", hot:""},
+  {name:"Conduct", desc:"Agentic AI operating system for SAP. $60M Series A (June 2026).", loc:"London", cats:["Software Eng","AI/ML Research"], roles:"~12 openings, mostly <b>engineering</b> on legacy-enterprise AI — 21-person team post-raise", url:"https://builtinlondon.uk/company/conduct-conductai", hot:"~12 roles"},
+  {name:"OpenArt AI", desc:"Generative AI image & video creation platform, founded by ex-Googlers.", loc:"SF Bay Area", cats:["Software Eng","AI/ML Research","Sales & GTM","Marketing","Product & Design"], roles:"<b>Senior SWE</b>, <b>Data Scientist</b>, <b>Senior UI Designer</b>, <b>Brand Marketer</b>, <b>AI Social Content Creator</b>, <b>Partnership Manager</b>", url:"https://jobs.ashbyhq.com/openart", hot:"~17 roles"},
+  {name:"fonio.ai", desc:"AI telephone assistant — GDPR-first, infrastructure in Germany.", loc:"Vienna / remote EU", cats:["Software Eng","Sales & GTM","Marketing","Operations"], roles:"<b>Engineering</b> (fully remote ±3h CET), <b>Sales</b>, <b>SEO Manager</b>, <b>Content Creator</b> (Vienna, relocation supported)", url:"https://www.fonio.ai/en/careers", hot:"~29 roles"},
+  {name:"Hilbert", desc:"AI-native growth engine for B2C brands (FreshDirect, Blank Street).", loc:"SF / NY", cats:["AI/ML Research","Sales & GTM"], roles:"<b>AI Engineer — Enterprise</b>, <b>AI Growth Architect</b>, <b>Founding Vertical Growth Leader</b>", url:"https://jobs.ashbyhq.com/hilberts", hot:""},
+  {name:"Phonely", desc:"Real-time voice AI phone support for contact centers.", loc:"San Jose / remote", cats:["Software Eng","Sales & GTM","Marketing"], roles:"<b>Full-stack (React/Next.js)</b>, <b>Cloud Infra (low-latency)</b>, <b>Enterprise Sales</b>, <b>Technical Sales Engineer</b>, <b>Demand Gen Lead</b>, internships", url:"https://www.phonely.ai/careers", hot:"~14 roles"},
+  {name:"Monaco", desc:"AI-native revenue platform replacing the GTM stack. $50M Series B.", loc:"SF", cats:["AI/ML Research","Sales & GTM","Product & Design"], roles:"<b>AI Engineer</b>, <b>AI Product Designer</b>, <b>Forward-Deployed AE</b> (new business & post-sales)", url:"https://jobs.ashbyhq.com/monaco", hot:""},
+  {name:"Armadin", desc:"AI red-teaming & automated vulnerability verification.", loc:"Palo Alto", cats:["AI/ML Research","Software Eng"], roles:"<b>AI security systems</b>, <b>red-teaming defenses</b> — 60-person team, growing", url:"https://www.armadin.com/careers", hot:""},
+  {name:"Mercor", desc:"Connects human experts with frontier AI labs. Profitable Series C.", loc:"SF / NY / London", cats:["Software Eng","Operations","Sales & GTM","Finance & G&A","Marketing","Expert / Contract"], roles:"<b>Engineering (~32)</b>, <b>Operations (~15)</b>, <b>Enterprise, Finance, Marketing</b> + self-managed <b>contract expert work</b>, paid weekly", url:"https://www.mercor.com/careers/", hot:"55–80 roles"},
+  {name:"Inertia", desc:"Mass-produced lasers & targets for commercial fusion. Founded by NIF ignition lead.", loc:"Livermore, CA", cats:["Hardware & Deep Tech","Operations"], roles:"<b>Industrial & manufacturing engineering</b> — prototype to mass production; leaders hired from Apple, Corning, Waymo", url:"https://simplify.jobs/c/Inertia", hot:"~12 roles"},
+  {name:"AfterQuery", desc:"Expert data for frontier AI models. YC-backed.", loc:"SF + remote experts", cats:["AI/ML Research","Software Eng","Operations","Sales & GTM","Expert / Contract"], roles:"<b>Engineering, Research (frontier data/post-training)</b>, <b>Strategic Projects</b>, <b>Growth & Sales</b> + paid <b>expert tracks</b>: finance, law, medicine, engineering", url:"https://www.afterquery.com/careers", hot:"~18 + experts"},
+  {name:"Hark", desc:"Personal AI + hardware from Brett Adcock. $700M Series A at $6B.", loc:"US", cats:["AI/ML Research","Hardware & Deep Tech","Product & Design","Recruiting"], roles:"<b>AI model roles</b>, <b>hardware & firmware</b>, <b>Interface Designer</b> ($150–300K), <b>Technical Recruiter</b>", url:"https://hark.com/careers", hot:"~25 roles"},
+  {name:"Revspot", desc:"AI agents that generate qualified pipeline for India's top consumer brands.", loc:"Bengaluru", cats:["Software Eng","AI/ML Research"], roles:"<b>Founding AI Engineer</b> (4–9 yrs), <b>Senior Backend — AI Agents</b> (voice calls, scheduling, market research)", url:"https://revspot.ai/careers.html", hot:"~11 roles"},
+  {name:"Bolna (YC F25)", desc:"Voice AI for Indian languages — 1,050+ paying customers.", loc:"Bengaluru", cats:["AI/ML Research","Software Eng"], roles:"<b>AI Solutions Engineer</b> (0–2 yrs) — prompts & tools powering voice agents; Hindi/Indian languages a plus", url:"https://www.workatastartup.com/companies/bolna-ai", hot:""},
+  {name:"Ollama", desc:"The local LLM platform — 8.9M monthly active developers. Series B.", loc:"Palo Alto", cats:["Software Eng","Sales & GTM","Marketing"], roles:"<b>SWE — Apps, Runtime, Cloud</b>, <b>Product Marketing Manager</b>, <b>Customer Engineer</b>, <b>Account Executive</b>", url:"https://www.workatastartup.com/companies/ollama", hot:"7 roles"},
+  {name:"Parallel Web Systems", desc:"The web, rebuilt for AIs — crawling, indexing, retrieval APIs.", loc:"SF / Palo Alto", cats:["AI/ML Research","Software Eng","Product & Design","Marketing","Operations"], roles:"<b>Research Engineer</b>, <b>Model Training</b>, <b>MTS — Infra & Scaling</b>, <b>Product Designer</b>, <b>Head of Marketing</b> ($150–300K ranges)", url:"https://parallel.ai/careers", hot:"~50 roles"},
+  {name:"Astral Systems", desc:"Compact fusion reactors producing cancer-fighting medical isotopes. £23M Series A.", loc:"Bristol, UK", cats:["Hardware & Deep Tech","Trades & Field"], roles:"<b>Fusion Research Lab Technician</b>, <b>Fusion Research Radiochemist</b> — scaling 23 → 40+ people in 2026", url:"https://www.astralsystems.com/about-us", hot:""},
+  {name:"Cowboy Space Corp.", desc:"Space-based power grid for AI, from Robinhood co-founder Baiju Bhatt.", loc:"San Carlos, CA", cats:["Software Eng","Hardware & Deep Tech","Operations"], roles:"<b>Flight Software Engineer</b> ($200–250K), <b>PCB Layout</b>, <b>Avionics Technician</b>, <b>Operations Associate</b> — onsite", url:"https://jobs.ashbyhq.com/cowboyspace", hot:"~32 roles"},
+  {name:"Prometheus", desc:"Jeff Bezos's 'AI for the physical economy' — $12B raised, ~150 people.", loc:"SF / London / Zurich", cats:["AI/ML Research","Hardware & Deep Tech"], roles:"<b>Frontier model researchers</b>, <b>ML infra/systems engineers</b>, <b>robotics & embodied AI</b> (perception, control, RL)", url:"https://www.prometheus.ai/", hot:"scaling fast"},
+  {name:"Fundamental", desc:"Predictive analytics for enterprises.", loc:"Multiple / remote", cats:["AI/ML Research","Software Eng"], roles:"Limited public listings — <b>AI Engineer</b> spotted; check LinkedIn jobs page directly", url:"https://www.linkedin.com/company/fundamentalhq/jobs/", hot:""},
+  {name:"Fluidstack", desc:"Cloud GPU clusters powering frontier AI labs.", loc:"SF / NY / Austin / Seattle", cats:["Software Eng","Operations"], roles:"<b>SWE — Cloud Infrastructure</b>, <b>SWE — Compute (GPU)</b>, <b>SRE</b>, <b>data center construction PM/ops</b>", url:"https://fluidstack.io/jobs", hot:"100+ roles"},
+  {name:"Strala", desc:"AI-native claims processing (TPA) for insurers. $55M from Founders Fund.", loc:"SF / NY", cats:["Software Eng","Operations","Expert / Contract"], roles:"<b>Software Engineer</b>, <b>Forward Deployed Engineer</b>, <b>Strategy & Ops</b>, <b>expert claim handlers / loss adjusters</b>", url:"https://jobs.ashbyhq.com/strala-ai", hot:"~25 roles"},
+  {name:"Jetson", desc:"Vertically integrated home electrification — heat pumps made simple.", loc:"Denver / San Jose / remote", cats:["Trades & Field","Sales & GTM","Operations"], roles:"<b>HVAC Installer</b> ($25–38/hr), <b>Install Team Lead</b>, <b>Project Coordinator</b>, <b>Sales/Estimator</b>, <b>supply chain</b> ($85–105K + benefits)", url:"https://ats.rippling.com/jetson/jobs", hot:""},
+  {name:"Bobyard", desc:"AI takeoff & estimating for construction — reads drawings 10x faster.", loc:"SF", cats:["Software Eng","Sales & GTM"], roles:"<b>Engineering (CV/NLP)</b>, <b>sales</b>, <b>customer success</b> — backed by 8VC, Primary, Pear", url:"https://wellfound.com/company/bobyard/jobs", hot:"~15 roles"},
+];
+
+// SF Giants palette: orange, black, cream
+const PALETTE = ["#FD5A1E","#27251F","#EFD19F","#E14E17","#3a352c","#c9752f"];
+function logoColor(name){ let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))>>>0; return PALETTE[h%PALETTE.length]; }
+function logoText(bg){ return (bg==="#EFD19F") ? "#27251F" : "#fff"; }
+function initials(name){ return name.replace(/\(.*\)/,"").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join(""); }
+
+let activeCat = null;
+const chipsEl = document.getElementById("chips");
+const gridEl = document.getElementById("grid");
+const searchEl = document.getElementById("search");
+
+function catCount(cat){ return DATA.filter(d=>d.cats.includes(cat)).length; }
+
+function renderChips(){
+  chipsEl.innerHTML = "";
+  const all = document.createElement("div");
+  all.className = "chip" + (activeCat===null ? " active" : "");
+  all.innerHTML = `All <span class="n">${DATA.length}</span>`;
+  all.onclick = ()=>{ activeCat=null; render(); };
+  chipsEl.appendChild(all);
+  CATS.forEach(cat=>{
+    const c = document.createElement("div");
+    c.className = "chip" + (activeCat===cat ? " active" : "");
+    c.innerHTML = `${cat} <span class="n">${catCount(cat)}</span>`;
+    c.onclick = ()=>{ activeCat = (activeCat===cat ? null : cat); render(); };
+    chipsEl.appendChild(c);
+  });
+}
+
+function render(){
+  renderChips();
+  const q = searchEl.value.trim().toLowerCase();
+  const shown = DATA.filter(d=>{
+    if(activeCat && !d.cats.includes(activeCat)) return false;
+    if(!q) return true;
+    const hay = (d.name+" "+d.desc+" "+d.loc+" "+d.roles+" "+d.cats.join(" ")).toLowerCase();
+    return hay.includes(q);
+  });
+  document.getElementById("statShown").textContent = shown.length;
+  document.getElementById("countLine").textContent =
+    `Showing ${shown.length} of ${DATA.length} companies` + (activeCat ? ` · ${activeCat}` : "") + (q ? ` · “${searchEl.value.trim()}”` : "");
+  gridEl.innerHTML = "";
+  if(!shown.length){
+    gridEl.innerHTML = `<div class="empty">No companies match — try clearing the filter or search.</div>`;
+    return;
+  }
+  shown.forEach(d=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-top">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div class="logo" style="background:${logoColor(d.name)};color:${logoText(logoColor(d.name))};border:1px solid var(--border)">${initials(d.name)}</div>
+          <div>
+            <div class="cname">${d.name}</div>
+            <div class="loc">${d.loc}</div>
+          </div>
+        </div>
+        ${d.hot ? `<span class="hot">${d.hot}</span>` : ""}
+      </div>
+      <div class="cdesc">${d.desc}</div>
+      <div class="tags">${d.cats.map(c=>`<span class="tag">${c}</span>`).join("")}</div>
+      <div class="roles">${d.roles}</div>
+      <a class="apply" href="${d.url}" target="_blank" rel="noopener">View openings →</a>`;
+    gridEl.appendChild(card);
+  });
+}
+
+searchEl.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
